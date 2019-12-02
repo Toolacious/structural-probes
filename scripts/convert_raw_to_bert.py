@@ -29,6 +29,11 @@ if args.bert_model == 'base':
   model = BertModel.from_pretrained('bert-base-cased')
   LAYER_COUNT = 12
   FEATURE_COUNT = 768
+elif args.bert_model == 'chinese':
+  tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+  model = BertModel.from_pretrained('bert-base-chinese')
+  LAYER_COUNT = 12
+  FEATURE_COUNT = 768
 elif args.bert_model == 'large':
   tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
   model = BertModel.from_pretrained('bert-large-cased')

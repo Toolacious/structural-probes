@@ -373,8 +373,12 @@ class BERTDataset(SubwordDataset):
       try:
         from pytorch_pretrained_bert import BertTokenizer
         if self.args['model']['hidden_dim'] == 768:
-          subword_tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-          print('Using BERT-base-cased tokenizer to align embeddings with PTB tokens')
+          if 'ctb' in self.args['dataset']['corpus']['root']:
+            subword_tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+            print('Using BERT-base-chinese tokenizer to align embeddings with CTB tokens')
+          else:
+            subword_tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+            print('Using BERT-base-cased tokenizer to align embeddings with PTB tokens')
         elif self.args['model']['hidden_dim'] == 1024:
           subword_tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
           print('Using BERT-large-cased tokenizer to align embeddings with PTB tokens')

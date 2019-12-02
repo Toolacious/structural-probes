@@ -37,6 +37,8 @@ def choose_task_classes(args):
     reporter_class = reporter.WordReporter
     if args['probe_training']['loss'] == 'L1':
       loss_class = loss.L1DepthLoss
+    elif args['probe_training']['loss'] == 'Rank':
+      loss_class = loss.RankDepthLoss
     else:
       raise ValueError("Unknown loss type for given probe type: {}".format(
         args['probe_training']['loss']))

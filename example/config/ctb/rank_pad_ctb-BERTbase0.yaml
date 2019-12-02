@@ -28,7 +28,7 @@ model:
   #embedding_dim: 1024 # ELMo word embedding dim
   model_type: BERT-disk # BERT-disk, ELMo-disk, 
   use_disk: True
-  model_layer: 12 # BERT-base: {1,...,12}; ELMo: {1,2,3}
+  model_layer: 0 # BERT-base: {1,...,12}; ELMo: {1,2,3}
 probe:
   task_signature: word # word, word_pair
   task_name: parse-depth

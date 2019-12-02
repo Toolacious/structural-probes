@@ -76,3 +76,31 @@ class L1DepthLoss(nn.Module):
     else:
       batch_loss = torch.tensor(0.0, device=self.args['device'])
     return batch_loss, total_sents
+
+class RankDepthLoss(nn.Module):
+  """Custom L1 loss for depth sequences."""
+  def __init__(self, args):
+    super(L1DepthLoss, self).__init__()
+    self.args = args
+    # TODO
+    raise NotImplementedError
+
+  def forward(self, predictions, label_batch, length_batch):
+    """ Computes L1 loss on depth sequences.
+
+    Ignores all entries where label_batch=-1
+    Normalizes first within sentences (by dividing by the sentence length)
+    and then across the batch.
+
+    Args:
+      predictions: A pytorch batch of predicted depths
+      label_batch: A pytorch batch of true depths
+      length_batch: A pytorch batch of sentence lengths
+
+    Returns:
+      A tuple of:
+        batch_loss: average loss in the batch
+        total_sents: number of sentences in the batch
+    """
+    # TODO
+    raise NotImplementedError

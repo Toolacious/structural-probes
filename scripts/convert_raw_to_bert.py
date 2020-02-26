@@ -11,7 +11,7 @@ Feb 2019
 
 '''
 import torch
-from pytorch_pretrained_bert import BertTokenizer, BertModel, BertForMaskedLM, WordpieceTokenizer
+from transformers import BertTokenizer, BertModel, BertForMaskedLM, WordpieceTokenizer
 from argparse import ArgumentParser
 import h5py
 import numpy as np

@@ -4,7 +4,7 @@
 ## Step 1
 Clone the repository below:
 ```bash=
-git clone https://github.com/Chung-I/structural-probes.git
+git clone https://github.com/Sologa/structural-probes.git
 ```
 ## Step 2
 Download dataset and put it under `example/data/ctb`.

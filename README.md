@@ -11,7 +11,7 @@ Download dataset and put it under `example/data/ctb`.
 ## Step 3
 Perform preprocessing:
 ```bash=
-cd scripts ; bash gen_ctb.sh
+bash scripts/gen_ctb.sh
 ```
 ## Step 4
 

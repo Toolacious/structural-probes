@@ -11,10 +11,11 @@ Feb 2019
 
 '''
 import torch
-from transformers import BertTokenizer, BertModel, BertForMaskedLM, WordpieceTokenizer
+from transformers import BertTokenizer, BertModel, BertForMaskedLM, WordpieceTokenizer, BertConfig
 from argparse import ArgumentParser
 import h5py
 import numpy as np
+from tqdm import tqdm
 
 argp = ArgumentParser()
 argp.add_argument('input_path')
@@ -25,17 +26,21 @@ args = argp.parse_args()
 # Load pre-trained model tokenizer (vocabulary)
 # Crucially, do not do basic tokenization; PTB is tokenized. Just do wordpiece tokenization.
 if args.bert_model == 'base':
-  tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+  tokenizer = BertTokenizer.from_pretrained('bert-base-cased', output_hidden_states=True)
   model = BertModel.from_pretrained('bert-base-cased')
   LAYER_COUNT = 12
   FEATURE_COUNT = 768
 elif args.bert_model == 'chinese':
-  tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
-  model = BertModel.from_pretrained('bert-base-chinese')
+  tokenizer = BertTokenizer.from_pretrained('bert-base-chinese', output_hidden_states=True)
+  config = BertConfig.from_pretrained('bert-base-chinese')
+  config.output_hidden_states = True
+  # import pdb
+  # pdb.set_trace()
+  model = BertModel.from_pretrained('bert-base-chinese', config=config)
   LAYER_COUNT = 12
   FEATURE_COUNT = 768
 elif args.bert_model == 'large':
-  tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
+  tokenizer = BertTokenizer.from_pretrained('bert-large-cased', output_hidden_states=True)
   model = BertModel.from_pretrained('bert-large-cased')
   LAYER_COUNT = 24
   FEATURE_COUNT = 1024
@@ -45,7 +50,7 @@ else:
 model.eval()
 
 with h5py.File(args.output_path, 'w') as fout:
-  for index, line in enumerate(open(args.input_path)):
+  for index, line in tqdm(enumerate(open(args.input_path))):
     line = line.strip() # Remove trailing characters
     line = '[CLS] ' + line + ' [SEP]'
     tokenized_text = tokenizer.wordpiece_tokenizer.tokenize(line)
@@ -57,7 +62,10 @@ with h5py.File(args.output_path, 'w') as fout:
     segments_tensors = torch.tensor([segment_ids])
   
     with torch.no_grad():
-        encoded_layers, _ = model(tokens_tensor, segments_tensors)
+        encoded_layers = model(tokens_tensor, segments_tensors)
+    # import pdb
+    # pdb.set_trace()
+    encoded_layers = encoded_layers[2][:12]
     dset = fout.create_dataset(str(index), (LAYER_COUNT, len(tokenized_text), FEATURE_COUNT))
     dset[:,:,:] = np.vstack([np.array(x) for x in encoded_layers])
   

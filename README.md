@@ -19,8 +19,12 @@ Perform training:
 bash scripts/call_exp.sh
 ```
 ## Step 5
-
-Run parse distance task and parse depth task on all layers of BERT-base-chinese; config files can be found at   `example/config/ctb/{pad,prd}_ctb-BERTbase[0-11].yaml`. After training, results(both **UUAS(Undirected Unlabeled Attachment Score**) and **Spearman's <h>&rho;</h>**) can be retrieved from `example/results/[checkpoint_name]/dev.{uuas,dev.spearmanr-5_50-mean}`. You're then asked to draw a plot of **UUAS** and **Spearman's <h>&rho;</h>** w.r.t. the layer of BERT (see Figure 1 of the [paper](https://nlp.stanford.edu/pubs/hewitt2019structural.pdf)). For details on the exact command, see [README.md](orig_README.md) of the original repo.
+Run demo.
+```bash=
+bash scripts/seg.sh CONFIG.JSON_OF_YOUR_4-1_SUMISSION MY_CWS_BERT.PT_OF_YOUR_4-1_SUMISSION
+```
+Put the transformer directory containing your modeling_bert.py used in cws of 4-1 to assist segmentation.
+Finally, you will have your .tikz in seg_results/
 
 ## Step 6
 Plot several dependency graphs given examples from dev set. The tikz file for visualization can be found after training at `example/results/[checkpoint_name]/dev.tikz`. You can use online service like Overleaf to complile the tikz file. An example could be found here: https://www.overleaf.com/read/bqcszyjrgnby.

@@ -16,8 +16,8 @@ file['model']['model_layer'] = int(args.model_layer)
 file['probe']['task_name'] = args.task_name
 file['probe']['params_path'] = 'predictor_{}_{}.params'.format(args.model_layer, args.task_name)
 
-file['probe']['maximum_rank'] = 128
-file['dataset']['batch_size'] = 40
+file['probe']['maximum_rank'] = 256
+file['dataset']['batch_size'] = 80
 file['probe_training']['epochs'] = 30
 
 if args.task_name == 'parse-depth':

@@ -157,8 +157,7 @@ def report_on_stdin(args):
       # # Print results visualizations
       # print_distance_image(args, untokenized_sent, distance_predictions, index)
       # print_depth_image(args, untokenized_sent, depth_predictions, index)
-      import pdb
-      pdb.set_trace()
+
       predicted_edges = reporter.prims_matrix_to_edges(distance_predictions, untokenized_sent, untokenized_sent)
       print_tikz(args, predicted_edges, untokenized_sent)
 

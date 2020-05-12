@@ -212,7 +212,7 @@ class WordPairReporter(Reporter):
 
   def print_tikz(self, prediction_edges, gold_edges, words, split_name):
     ''' Turns edge sets on word (nodes) into tikz dependency LaTeX. '''
-    with open(os.path.join(self.reporting_root, split_name+'.tikz'), 'a') as fout:
+    with open(os.path.join(self.reporting_root, split_name+'.tikz'), 'w') as fout:
       string = """\\begin{dependency}[hide label, edge unit distance=.5ex]
     \\begin{deptext}[column sep=0.05cm]
     """ 

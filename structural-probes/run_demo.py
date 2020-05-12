@@ -26,7 +26,7 @@ import task
 import loss
 import run_experiment
 
-from pytorch_pretrained_bert import BertTokenizer, BertModel
+from transformers import BertTokenizer, BertModel, BertConfig
 
 
 def print_tikz(args, prediction_edges, words):
@@ -107,10 +107,13 @@ def report_on_stdin(args):
   """
 
   # Define the BERT model and tokenizer
-  tokenizer = BertTokenizer.from_pretrained('bert-large-cased')
-  model = BertModel.from_pretrained('bert-large-cased')
-  LAYER_COUNT = 24
-  FEATURE_COUNT = 1024
+  tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+  config = BertConfig.from_pretrained('bert-base-chinese')
+  config.output_hidden_states = True
+
+  model = BertModel.from_pretrained('bert-base-chinese', config=config)
+  LAYER_COUNT = 12
+  FEATURE_COUNT = 768
   model.to(args['device'])
   model.eval()
 
@@ -122,7 +125,7 @@ def report_on_stdin(args):
   depth_probe = probe.OneWordPSDProbe(args)
   depth_probe.load_state_dict(torch.load(args['probe']['depth_params_path'], map_location=args['device']))
 
-  for index, line in tqdm(enumerate(sys.stdin), desc='[demoing]'):
+  for index, line in tqdm(enumerate(open('data/segmented.txt')), desc='[demoing]'):
     # Tokenize the sentence and create tensor inputs to BERT
     untokenized_sent = line.strip().split()
     tokenized_sent = tokenizer.wordpiece_tokenizer.tokenize('[CLS] ' + ' '.join(line.strip().split()) + ' [SEP]')
@@ -140,7 +143,9 @@ def report_on_stdin(args):
 
     with torch.no_grad():
       # Run sentence tensor through BERT after averaging subwords for each token
-      encoded_layers, _ = model(tokens_tensor, segments_tensors)
+      encoded_layers = model(tokens_tensor, segments_tensors)[-1]
+      # import pdb
+      # pdb.set_trace()
       single_layer_features = encoded_layers[args['model']['model_layer']]
       representation = torch.stack([torch.mean(single_layer_features[0,untok_tok_mapping[i][0]:untok_tok_mapping[i][-1]+1,:], dim=0) for i in range(len(untokenized_sent))], dim=0)
       representation = representation.view(1, *representation.size())
@@ -149,10 +154,11 @@ def report_on_stdin(args):
       distance_predictions = distance_probe(representation.to(args['device'])).detach().cpu()[0][:len(untokenized_sent),:len(untokenized_sent)].numpy()
       depth_predictions = depth_probe(representation).detach().cpu()[0][:len(untokenized_sent)].numpy()
 
-      # Print results visualizations
-      print_distance_image(args, untokenized_sent, distance_predictions, index)
-      print_depth_image(args, untokenized_sent, depth_predictions, index)
-
+      # # Print results visualizations
+      # print_distance_image(args, untokenized_sent, distance_predictions, index)
+      # print_depth_image(args, untokenized_sent, depth_predictions, index)
+      import pdb
+      pdb.set_trace()
       predicted_edges = reporter.prims_matrix_to_edges(distance_predictions, untokenized_sent, untokenized_sent)
       print_tikz(args, predicted_edges, untokenized_sent)
 
@@ -172,7 +178,7 @@ if __name__ == '__main__':
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
   yaml_args= yaml.load(open(cli_args.experiment_config))
-  run_experiment.setup_new_experiment_dir(cli_args, yaml_args, cli_args.results_dir)
+  # run_experiment.setup_new_experiment_dir(cli_args, yaml_args, cli_args.results_dir)
   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
   yaml_args['device'] = device
   report_on_stdin(yaml_args)

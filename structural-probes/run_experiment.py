@@ -195,9 +195,10 @@ def setup_new_experiment_dir(args, yaml_args, reuse_results_path):
     yaml_args: the global config dictionary loaded from yaml
     reuse_results_path: the (optional) path to reuse from a previous run.
   """
+  
   now = datetime.now()
-  date_suffix = '-'.join((str(x) for x in [now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond]))
-  model_suffix = '-'.join((yaml_args['model']['model_type'], yaml_args['probe']['task_name']))
+  # date_suffix = '-'.join((str(x) for x in [now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond]))
+  model_suffix = '-'.join((yaml_args['probe']['task_name'], str(yaml_args['model']['model_layer'])))
   if reuse_results_path:
     new_root = reuse_results_path
     tqdm.write('Reusing old results directory at {}'.format(new_root))
@@ -206,7 +207,7 @@ def setup_new_experiment_dir(args, yaml_args, reuse_results_path):
       tqdm.write('Setting train_probe to 0 to avoid squashing old params; '
           'explicitly set to 1 to override.')
   else:
-    new_root = os.path.join(yaml_args['reporting']['root'], model_suffix + '-' + date_suffix +'/' )
+    new_root = os.path.join(yaml_args['reporting']['root'], model_suffix)
     tqdm.write('Constructing new results directory at {}'.format(new_root))
   yaml_args['reporting']['root'] = new_root
   os.makedirs(new_root, exist_ok=True)
@@ -237,8 +238,10 @@ if __name__ == '__main__':
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-  yaml_args= yaml.load(open(cli_args.experiment_config))
+  yaml_args = yaml.load(open(cli_args.experiment_config))
   setup_new_experiment_dir(cli_args, yaml_args, cli_args.results_dir)
   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
   yaml_args['device'] = device
+  # import pdb
+  # pdb.set_trace()
   execute_experiment(yaml_args, train_probe=cli_args.train_probe, report_results=cli_args.report_results)

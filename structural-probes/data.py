@@ -371,7 +371,7 @@ class BERTDataset(SubwordDataset):
     '''
     if subword_tokenizer == None:
       try:
-        from pytorch_pretrained_bert import BertTokenizer
+        from transformers import BertTokenizer
         if self.args['model']['hidden_dim'] == 768:
           if 'ctb' in self.args['dataset']['corpus']['root']:
             subword_tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')

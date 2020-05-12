@@ -22,6 +22,9 @@ class ProbeRegimen:
     self.max_epochs = args['probe_training']['epochs']
     self.params_path = os.path.join(args['reporting']['root'], args['probe']['params_path'])
 
+    # import pdb 
+    # pdb.set_trace()
+
   def set_optimizer(self, probe):
     """Sets the optimizer and scheduler for the training regimen.
   
@@ -56,7 +59,7 @@ class ProbeRegimen:
       epoch_dev_epoch_count = 0
       epoch_train_loss_count = 0
       epoch_dev_loss_count = 0
-      for batch in tqdm(train_dataset, desc='[training batch]'):
+      for batch in train_dataset:
         probe.train()
         self.optimizer.zero_grad()
         observation_batch, label_batch, length_batch, _ = batch
@@ -68,7 +71,7 @@ class ProbeRegimen:
         epoch_train_epoch_count += 1
         epoch_train_loss_count += count.detach().cpu().numpy()
         self.optimizer.step()
-      for batch in tqdm(dev_dataset, desc='[dev batch]'):
+      for batch in dev_dataset:
         self.optimizer.zero_grad()
         probe.eval()
         observation_batch, label_batch, length_batch, _ = batch

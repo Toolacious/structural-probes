@@ -7,7 +7,7 @@ Clone the repository below:
 git clone https://github.com/Sologa/structural-probes.git
 ```
 ## Step 2
-Download dataset and put it under `example/data/ctb`.
+Download dataset and put it under `data/ctb`.
 ## Step 3
 Perform preprocessing:
 ```bash=

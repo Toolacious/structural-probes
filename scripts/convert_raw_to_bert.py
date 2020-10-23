@@ -27,12 +27,12 @@ args = argp.parse_args()
 # Crucially, do not do basic tokenization; PTB is tokenized. Just do wordpiece tokenization.
 if args.bert_model == 'base':
   tokenizer = BertTokenizer.from_pretrained('bert-base-cased', output_hidden_states=True)
-  model = BertModel.from_pretrained('bert-base-cased')
+  model = BertModel.from_pretrained('bert-base-cased').cuda()
   LAYER_COUNT = 12
   FEATURE_COUNT = 768
 elif args.bert_model == 'chinese':
   tokenizer = BertTokenizer.from_pretrained('bert-base-chinese', output_hidden_states=True)
-  config = BertConfig.from_pretrained('bert-base-chinese')
+  config = BertConfig.from_pretrained('bert-base-chinese').cuda()
   config.output_hidden_states = True
   # import pdb
   # pdb.set_trace()
@@ -41,7 +41,7 @@ elif args.bert_model == 'chinese':
   FEATURE_COUNT = 768
 elif args.bert_model == 'large':
   tokenizer = BertTokenizer.from_pretrained('bert-large-cased', output_hidden_states=True)
-  model = BertModel.from_pretrained('bert-large-cased')
+  model = BertModel.from_pretrained('bert-large-cased').cuda()
   LAYER_COUNT = 24
   FEATURE_COUNT = 1024
 else:
@@ -58,8 +58,8 @@ with h5py.File(args.output_path, 'w') as fout:
     segment_ids = [1 for x in tokenized_text]
   
     # Convert inputs to PyTorch tensors
-    tokens_tensor = torch.tensor([indexed_tokens])
-    segments_tensors = torch.tensor([segment_ids])
+    tokens_tensor = torch.tensor([indexed_tokens]).cuda()
+    segments_tensors = torch.tensor([segment_ids]).cuda()
   
     with torch.no_grad():
         encoded_layers = model(tokens_tensor, segments_tensors)
